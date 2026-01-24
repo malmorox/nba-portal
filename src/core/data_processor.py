@@ -10,6 +10,3 @@ class NBADataProcessor:
             'Columnas': list(self.df.columns)
         }
         return info
-    
-    def mostrar_primeros(self, n=10):
-        return self.df.head(n)
