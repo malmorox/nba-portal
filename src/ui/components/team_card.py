@@ -3,11 +3,22 @@ from PIL import Image
 from pathlib import Path
 
 class TeamCard(ctk.CTkFrame):
-    def __init__(self, parent, team_data, **kwargs):
-        super().__init__(parent, corner_radius=15, **kwargs)
+    def __init__(self, parent, team_data, on_click=None, width=220, height=220):
+        super().__init__(
+            parent, 
+            corner_radius=15, 
+            width=width,
+            height=height,
+            cursor="hand2")
         
         self.team_data = team_data
+        self.on_click = on_click
+        
         self.setup_ui()
+        
+        self.bind("<Button-1>", self.handle_click)
+        for child in self.winfo_children():
+            child.bind("<Button-1>", self.handle_click)
     
     def setup_ui(self):
         self.configure(fg_color="#21262d")
@@ -84,3 +95,8 @@ class TeamCard(ctk.CTkFrame):
                 text_color="#6e7681"
             )
             error_label.pack()
+    
+    
+    def handle_click(self, event):
+        if self.on_click:
+            self.on_click(self.team_data["id"])

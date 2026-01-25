@@ -1,31 +1,31 @@
-id,full_name,abbreviation,nickname,city,state,year_founded
-1610612737,Atlanta Hawks,ATL,Hawks,Atlanta,Georgia,1949
-1610612738,Boston Celtics,BOS,Celtics,Boston,Massachusetts,1946
-1610612739,Cleveland Cavaliers,CLE,Cavaliers,Cleveland,Ohio,1970
-1610612740,New Orleans Pelicans,NOP,Pelicans,New Orleans,Louisiana,2002
-1610612741,Chicago Bulls,CHI,Bulls,Chicago,Illinois,1966
-1610612742,Dallas Mavericks,DAL,Mavericks,Dallas,Texas,1980
-1610612743,Denver Nuggets,DEN,Nuggets,Denver,Colorado,1976
-1610612744,Golden State Warriors,GSW,Warriors,San Francisco,California,1946
-1610612745,Houston Rockets,HOU,Rockets,Houston,Texas,1967
-1610612746,Los Angeles Clippers,LAC,Clippers,Los Angeles,California,1970
-1610612747,Los Angeles Lakers,LAL,Lakers,Los Angeles,California,1948
-1610612748,Miami Heat,MIA,Heat,Miami,Florida,1988
-1610612749,Milwaukee Bucks,MIL,Bucks,Milwaukee,Wisconsin,1968
-1610612750,Minnesota Timberwolves,MIN,Timberwolves,Minnesota,Minnesota,1989
-1610612751,Brooklyn Nets,BKN,Nets,Brooklyn,New York,1976
-1610612752,New York Knicks,NYK,Knicks,New York,New York,1946
-1610612753,Orlando Magic,ORL,Magic,Orlando,Florida,1989
-1610612754,Indiana Pacers,IND,Pacers,Indiana,Indiana,1976
-1610612755,Philadelphia 76ers,PHI,76ers,Philadelphia,Pennsylvania,1949
-1610612756,Phoenix Suns,PHX,Suns,Phoenix,Arizona,1968
-1610612757,Portland Trail Blazers,POR,Trail Blazers,Portland,Oregon,1970
-1610612758,Sacramento Kings,SAC,Kings,Sacramento,California,1948
-1610612759,San Antonio Spurs,SAS,Spurs,San Antonio,Texas,1976
-1610612760,Oklahoma City Thunder,OKC,Thunder,Oklahoma City,Oklahoma,1967
-1610612761,Toronto Raptors,TOR,Raptors,Toronto,Ontario,1995
-1610612762,Utah Jazz,UTA,Jazz,Utah,Utah,1974
-1610612763,Memphis Grizzlies,MEM,Grizzlies,Memphis,Tennessee,1995
-1610612764,Washington Wizards,WAS,Wizards,Washington,District of Columbia,1961
-1610612765,Detroit Pistons,DET,Pistons,Detroit,Michigan,1948
-1610612766,Charlotte Hornets,CHA,Hornets,Charlotte,North Carolina,1988
+id,full_name,abbreviation,nickname,city,state,year_founded,arena,head_coach
+1610612737,Atlanta Hawks,ATL,Hawks,Atlanta,Georgia,1949,State Farm Arena,Quin Snyder
+1610612738,Boston Celtics,BOS,Celtics,Boston,Massachusetts,1946,TD Garden,Joe Mazzulla
+1610612739,Cleveland Cavaliers,CLE,Cavaliers,Cleveland,Ohio,1970,Rocket Arena,Kenny Atkinson
+1610612740,New Orleans Pelicans,NOP,Pelicans,New Orleans,Louisiana,2002,Smoothie King Center,James Borrego
+1610612741,Chicago Bulls,CHI,Bulls,Chicago,Illinois,1966,United Center,Billy Donovan
+1610612742,Dallas Mavericks,DAL,Mavericks,Dallas,Texas,1980,American Airlines Center,Jason Kidd
+1610612743,Denver Nuggets,DEN,Nuggets,Denver,Colorado,1976,Ball Arena,David Adelman
+1610612744,Golden State Warriors,GSW,Warriors,San Francisco,California,1946,Chase Center,Steve Kerr
+1610612745,Houston Rockets,HOU,Rockets,Houston,Texas,1967,Toyota Center,Ime Udoka
+1610612746,Los Angeles Clippers,LAC,Clippers,Los Angeles,California,1970,Intuit Dome,Tyronn Lue
+1610612747,Los Angeles Lakers,LAL,Lakers,Los Angeles,California,1948,Crypto.com Arena,JJ Redick
+1610612748,Miami Heat,MIA,Heat,Miami,Florida,1988,Kaseya Center,Erik Spoelstra
+1610612749,Milwaukee Bucks,MIL,Bucks,Milwaukee,Wisconsin,1968,Fiserv Forum,Doc Rivers
+1610612750,Minnesota Timberwolves,MIN,Timberwolves,Minnesota,Minnesota,1989,Target Center,Chris Finch
+1610612751,Brooklyn Nets,BKN,Nets,Brooklyn,New York,1976,Barclays Center,Jordi Fernandez
+1610612752,New York Knicks,NYK,Knicks,New York,New York,1946,Madison Square Garden,Mike Brown
+1610612753,Orlando Magic,ORL,Magic,Orlando,Florida,1989,Kia Center,Jamahl Mosley
+1610612754,Indiana Pacers,IND,Pacers,Indiana,Indiana,1976,Gainbridge Fieldhouse ,Rick Carlisle
+1610612755,Philadelphia 76ers,PHI,76ers,Philadelphia,Pennsylvania,1949,Xfinity Mobile Arena,Nick Nurse
+1610612756,Phoenix Suns,PHX,Suns,Phoenix,Arizona,1968,Mortgage Matchup Center,Jordan Ott
+1610612757,Portland Trail Blazers,POR,Trail Blazers,Portland,Oregon,1970,Moda Center,Chauncey Billups
+1610612758,Sacramento Kings,SAC,Kings,Sacramento,California,1948,Golden 1 Center,Doug Christie
+1610612759,San Antonio Spurs,SAS,Spurs,San Antonio,Texas,1976,Frost Bank Center,Mitch Johnson
+1610612760,Oklahoma City Thunder,OKC,Thunder,Oklahoma City,Oklahoma,1967,Paycom Center,Mark Daigneault
+1610612761,Toronto Raptors,TOR,Raptors,Toronto,Ontario,1995,Scotiabank Arena,Darko Rajakovic
+1610612762,Utah Jazz,UTA,Jazz,Utah,Utah,1974,Delta Center,Will Hardy
+1610612763,Memphis Grizzlies,MEM,Grizzlies,Memphis,Tennessee,1995,FedExForum,Tuomas Iisalo
+1610612764,Washington Wizards,WAS,Wizards,Washington,District of Columbia,1961,Capital One Arena,Brian Keefe
+1610612765,Detroit Pistons,DET,Pistons,Detroit,Michigan,1948,Little Caesars Arena,J. B. Bickerstaff
+1610612766,Charlotte Hornets,CHA,Hornets,Charlotte,North Carolina,1988,Spectrum Center,Charles Lee
