@@ -48,3 +48,38 @@ class NBADataFetcher:
         except Exception as e:
             print(f"Error obteniendo roster del equipo {team_id}: {e}")
             return pd.DataFrame()
+    
+    
+    def get_team_last_games(self, team_id, last_n=10):
+        cache_key = f"last_games_{team_id}_{last_n}"
+        
+        if cache_key in self.cache:
+            return self.cache[cache_key]
+        
+        try:
+            from nba_api.stats.endpoints import teamgamelog
+            
+            game_log = teamgamelog.TeamGameLog(
+                team_id=team_id,
+                season=self.current_season,
+                season_type_all_star='Regular Season'
+            )
+            
+            df = game_log.get_data_frames()[0]
+            df = df.head(last_n)
+            
+            # Limpiar y formatear datos
+            result_df = pd.DataFrame({
+                'GAME_DATE': pd.to_datetime(df['GAME_DATE']).dt.strftime('%d/%m/%Y'),
+                'MATCHUP': df['MATCHUP'],
+                'WL': df['WL'],
+                'PTS': df['PTS'],
+                'IS_WIN': df['WL'] == 'W'
+            })
+            
+            self.cache[cache_key] = result_df
+            return result_df
+            
+        except Exception as e:
+            print(f"Error loading game log: {e}")
+            return pd.DataFrame()
