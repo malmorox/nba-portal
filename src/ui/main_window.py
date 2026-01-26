@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from src.core.data_fetcher import NBADataFetcher
+from src.core.data_processor import NBADataProcessor
 from src.ui.views.teams_view import TeamsView
 from src.ui.views.team_detail_view import TeamDetailView
 
@@ -19,6 +20,8 @@ class MainWindow(ctk.CTk):
         
         # Inicializar data fetcher
         self.data_fetcher = NBADataFetcher()
+
+        self.data_processor = NBADataProcessor()
         
         # Container para las vistas
         self.main_container = ctk.CTkFrame(self, fg_color="#0d1117")
@@ -73,7 +76,7 @@ class MainWindow(ctk.CTk):
         """Actualiza el estilo de los botones de navegación"""
         for key, btn in self.nav_buttons.items():
             if key == active_view:
-                btn.configure(fg_color="#238636", hover_color="#2ea043")
+                btn.configure(fg_color="#17A7E8", hover_color="#27B7F5")
             else:
                 btn.configure(fg_color="#21262d", hover_color="#30363d")
     
@@ -111,6 +114,7 @@ class MainWindow(ctk.CTk):
                 self.content_container,
                 team,
                 self.data_fetcher,
+                self.data_processor,
                 on_back=lambda: self.show_view('teams')
             )
             self.current_view.pack(fill="both", expand=True)

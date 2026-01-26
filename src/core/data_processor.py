@@ -1,12 +1,10 @@
-import pandas as pd
+from datetime import datetime
 
 class NBADataProcessor:
-    def __init__(self, df):
-        self.df = df
-    
-    def get_basic_info(self):
-        info = {
-            'Total de registros': len(self.df),
-            'Columnas': list(self.df.columns)
-        }
-        return info
+    @staticmethod
+    def format_birth_date(raw_date):
+        try:
+            dt = datetime.strptime(raw_date, "%b %d, %Y")
+            return dt.strftime("%d/%m/%Y")
+        except Exception:
+            return raw_date

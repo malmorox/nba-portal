@@ -1,18 +1,20 @@
+from src.ui.components.team_recent_games import RecentGamesCard
 import customtkinter as ctk
 from PIL import Image
 import os
-from datetime import datetime
 
 class TeamDetailView(ctk.CTkFrame):
-    def __init__(self, parent, team_data, data_fetcher, on_back=None):
+    def __init__(self, parent, team_data, data_fetcher, data_processor, on_back=None):
         super().__init__(parent, fg_color="#0d1117")
         
         self.team_data = team_data
         self.data_fetcher = data_fetcher
+        self.data_processor = data_processor
         self.on_back = on_back
         
         self._init_config()
         self.setup_ui()
+        self.load_recent_games()
         self.load_players()
         
     def _init_config(self):
@@ -22,6 +24,7 @@ class TeamDetailView(ctk.CTkFrame):
             {"weight": 1, "minsize": 130},
             {"weight": 1, "minsize": 80},
         ]
+        self.recent_games_column_width = 360
     
     def setup_ui(self):
         self.scroll_frame = ctk.CTkScrollableFrame(self, fg_color="#0d1117")
@@ -35,10 +38,10 @@ class TeamDetailView(ctk.CTkFrame):
         
         # Separador
         self.create_separator()
-        
-        # Sección de jugadores (header + frame)
-        self.create_players_section()
+
+        self.create_bottom_layout()
     
+    # BOTON DE VOLVER A LA PESATÑA DE EQUIPOS
     def create_back_button(self):
         back_btn = ctk.CTkButton(
             self.scroll_frame,
@@ -52,6 +55,7 @@ class TeamDetailView(ctk.CTkFrame):
         )
         back_btn.pack(anchor="nw", pady=(0, 20))
     
+    # SECCION SUPERIOR CON LA INFORMACIÓN DE CADA EQUIPO
     def create_team_info_section(self):
         team_info_frame = ctk.CTkFrame(self.scroll_frame, fg_color="transparent")
         team_info_frame.pack(fill="x", pady=(0, 30))
@@ -61,12 +65,13 @@ class TeamDetailView(ctk.CTkFrame):
         content_container.pack(fill="x", anchor="nw")
         
         # Logo (izquierda)
-        self.create_team_logo(content_container)
+        self.display_team_logo(content_container)
         
         # Información del equipo (derecha)
-        self.create_team_details(content_container)
+        self.display_team_details(content_container)
     
-    def create_team_logo(self, parent):
+    # FUNCION PARA CARGAR EL LOGO DEL EQUIPO A PARTIR DE LA ABREVIACIÓN DEL EQUIPO
+    def display_team_logo(self, parent):
         logo_frame = ctk.CTkFrame(parent, fg_color="transparent")
         logo_frame.pack(side="left", padx=(0, 40), anchor="n")
         
@@ -92,7 +97,8 @@ class TeamDetailView(ctk.CTkFrame):
         else:
             self.show_logo_placeholder(logo_frame)
     
-    def create_team_details(self, parent):
+    # FUNCION PARA CARGAR LOS DETALLES DEL EQUIPO (NOMBRE, ABREVIACIÓN CIUDAD, ESTADO, AÑO DE FUNDACIÓN Y ESTADIO)
+    def display_team_details(self, parent):
         info_container = ctk.CTkFrame(parent, fg_color="transparent")
         info_container.pack(side="left", fill="both", expand=True, anchor="n")
         
@@ -137,14 +143,107 @@ class TeamDetailView(ctk.CTkFrame):
         )
         founded_label.pack(anchor="w", pady=(0, 20))
     
+    # SEPARADOR QUE DIVIDE LA INFORMACIÓN DEL EQUIPO DE LA PLATILLA Y ULTIMOS PARTIDOS JUGADOS 
     def create_separator(self):
         separator = ctk.CTkFrame(self.scroll_frame, fg_color="#30363d", height=2)
         separator.pack(fill="x", pady=30)
     
+
+    def create_bottom_layout(self):
+        bottom_container = ctk.CTkFrame(self.scroll_frame, fg_color="transparent")
+        bottom_container.pack(fill="both", expand=True)
+
+        self.recent_col = ctk.CTkFrame(
+            bottom_container,
+            fg_color="transparent",
+            width=self.recent_games_column_width
+        )
+        self.recent_col.pack(side="left", fill="both", padx=(0, 20), anchor="n")
+        self.recent_col.pack_propagate(False)
+
+        self.recent_games_frame = ctk.CTkFrame(
+            self.recent_col,
+            fg_color="#161b22",
+            corner_radius=10
+        )
+        self.recent_games_frame.pack(fill="both", expand=True)
+        self.recent_games_frame.pack_propagate(False)
+        self.recent_games_frame.configure(height=420)
+
+        self.recent_placeholder = ctk.CTkLabel(
+            self.recent_games_frame,
+            text="(Aquí irán los últimos 10 partidos)",
+            font=ctk.CTkFont(size=13),
+            text_color="#6e7681"
+        )
+        self.recent_placeholder.pack(expand=True)
+
+        self.players_col = ctk.CTkFrame(bottom_container, fg_color="transparent")
+        self.players_col.pack(side="left", fill="both", expand=True, anchor="n")
+
+        self.create_players_section()
+    
+    def load_recent_games(self):
+        try:
+            games_df = self.data_fetcher.get_team_last_games(
+                team_id=self.team_data["id"],
+                last_n=10
+            )
+
+            if games_df is None or games_df.empty:
+                self.show_recent_games_empty()
+                return
+
+            self.display_recent_games(games_df)
+
+        except Exception as e:
+            print(f"Error loading recent games: {e}")
+            self.show_recent_games_error(str(e))
+
+
+    def display_recent_games(self, games_df):
+    # limpiar placeholder / widgets anteriores
+        for w in self.recent_games_frame.winfo_children():
+            w.destroy()
+
+        # UNA sola card que ya contiene header + racha + lista
+        card = RecentGamesCard(
+            self.recent_games_frame,
+            games_df=games_df,
+            width=self.recent_games_column_width
+        )
+        card.pack(fill="both", expand=True)
+
+
+    def show_recent_games_empty(self):
+        for w in self.recent_games_frame.winfo_children():
+            w.destroy()
+
+        ctk.CTkLabel(
+            self.recent_games_frame,
+            text="No hay partidos recientes disponibles.",
+            font=ctk.CTkFont(size=13),
+            text_color="#6e7681",
+            justify="left"
+        ).pack(padx=15, pady=15, anchor="w")
+
+    def show_recent_games_error(self, error):
+        for w in self.recent_games_frame.winfo_children():
+            w.destroy()
+
+        ctk.CTkLabel(
+            self.recent_games_frame,
+            text=f"❌ Error cargando partidos:\n{error}",
+            font=ctk.CTkFont(size=13),
+            text_color="#f85149",
+            justify="left"
+        ).pack(padx=15, pady=15, anchor="w")
+
+    # SECCIÓN PARA CARGAR LOS JUGADORES DEL EQUIPO SELECCIONADO
     def create_players_section(self):
         # Header
         players_header = ctk.CTkLabel(
-            self.scroll_frame,
+            self.players_col,
             text="Plantilla",
             font=ctk.CTkFont(size=24, weight="bold"),
             text_color="#c9d1d9",
@@ -153,11 +252,10 @@ class TeamDetailView(ctk.CTkFrame):
         players_header.pack(anchor="w", pady=(0, 20))
         
         # Frame para jugadores
-        self.players_frame = ctk.CTkFrame(self.scroll_frame, fg_color="transparent")
+        self.players_frame = ctk.CTkFrame(self.players_col, fg_color="transparent")
         self.players_frame.pack(fill="both", expand=True)
     
     def load_players(self):
-        """Carga los jugadores usando pandas"""
         try:
             # Obtener roster como DataFrame
             roster_df = self.data_fetcher.get_team_roster(self.team_data['id'])
@@ -249,7 +347,7 @@ class TeamDetailView(ctk.CTkFrame):
 
         ctk.CTkLabel(
             row,
-            text=format_birth_date(player_data['birth_date']),
+            text=self.data_processor.format_birth_date(player_data['birth_date']),
             font=ctk.CTkFont(size=13),
             text_color="#c9d1d9"
         ).grid(row=0, column=2, sticky="w", padx=15)
@@ -277,7 +375,6 @@ class TeamDetailView(ctk.CTkFrame):
         message.pack(pady=50)
     
     def show_error_message(self, error):
-        """Muestra mensaje de error"""
         message = ctk.CTkLabel(
             self.players_frame,
             text=f"❌ Error loading roster: {error}",
@@ -287,7 +384,6 @@ class TeamDetailView(ctk.CTkFrame):
         message.pack(pady=50)
     
     def show_logo_placeholder(self, parent):
-        """Muestra placeholder cuando no hay logo"""
         placeholder = ctk.CTkLabel(
             parent,
             text="🏀",
@@ -297,11 +393,3 @@ class TeamDetailView(ctk.CTkFrame):
             height=300
         )
         placeholder.pack(padx=20, pady=20)
-        
-
-def format_birth_date(raw_date):
-    try:
-        dt = datetime.strptime(raw_date, "%b %d, %Y")
-        return dt.strftime("%d/%m/%Y")
-    except Exception:
-        return raw_date

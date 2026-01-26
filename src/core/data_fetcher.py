@@ -1,5 +1,5 @@
 from nba_api.stats.static import players, teams
-from nba_api.stats.endpoints import playercareerstats, leaguedashplayerstats, commonplayerinfo, commonteamroster
+from nba_api.stats.endpoints import playercareerstats, leaguedashplayerstats, commonplayerinfo, commonteamroster, teamgamelog, boxscoretraditionalv2
 import pandas as pd
 import os
 from pathlib import Path
@@ -11,17 +11,36 @@ class NBADataFetcher:
     def __init__(self, data_dir='data'):
         self.data_dir = BASE_DIR / data_dir
         self.data_dir.mkdir(parents=True, exist_ok=True)
+        self.current_season = '2025-26'
+        self._init_config()
+
+    def _init_config(self):
+        self.sleep_seconds = 0.6
+        self.max_retries = 3
+        self.retry_sleep = 1.5
+
+    def _retry_call(self, fn, *args, **kwargs):
+        last_error = None
+        for attempt in range(1, self.max_retries + 1):
+            try:
+                return fn(*args, **kwargs)
+            except Exception as e:
+                last_error = e
+                print(f"[Retry {attempt}/{self.max_retries}] {e}")
+                time.sleep(self.retry_sleep)
+        raise last_error
     
     def get_all_teams(self):
         csv_path = self.data_dir / 'nba_teams.csv'
         
         if csv_path.exists():
-            return pd.read_csv(csv_path)
-        
-        # Si no existe, obtenemos de la API (NO PASA)
-        teams_data = teams.get_teams()
-        df = pd.DataFrame(teams_data)
-        df.to_csv(csv_path, index=False)
+            df = pd.read_csv(csv_path)
+        else:
+            teams_data = teams.get_teams()
+            df = pd.DataFrame(teams_data)
+            df.to_csv(csv_path, index=False)
+
+        df = df.sort_values(by="full_name").reset_index(drop=True)
         return df
     
     
@@ -32,16 +51,16 @@ class NBADataFetcher:
                 return team
         return None
     
-    def get_team_roster(self, team_id: int, season='2025-26'):
+    def get_team_roster(self, team_id: int):
         try:
             roster = commonteamroster.CommonTeamRoster(
                 team_id=team_id,
-                season=season
+                season=self.current_season
             )
             
             df = roster.get_data_frames()[0]
             
-            time.sleep(0.6)
+            time.sleep(self.sleep_seconds)
             
             return df
             
@@ -51,35 +70,33 @@ class NBADataFetcher:
     
     
     def get_team_last_games(self, team_id, last_n=10):
-        cache_key = f"last_games_{team_id}_{last_n}"
-        
-        if cache_key in self.cache:
-            return self.cache[cache_key]
-        
+        if last_n <= 0:
+            return pd.DataFrame()
+
         try:
-            from nba_api.stats.endpoints import teamgamelog
-            
-            game_log = teamgamelog.TeamGameLog(
+            game_log = self._retry_call(
+                teamgamelog.TeamGameLog,
                 team_id=team_id,
                 season=self.current_season,
-                season_type_all_star='Regular Season'
+                season_type_all_star="Regular Season"
             )
-            
+
             df = game_log.get_data_frames()[0]
+            if df.empty:
+                return pd.DataFrame()
             df = df.head(last_n)
-            
-            # Limpiar y formatear datos
+
             result_df = pd.DataFrame({
-                'GAME_DATE': pd.to_datetime(df['GAME_DATE']).dt.strftime('%d/%m/%Y'),
+                'GAME_DATE': df['GAME_DATE'],
                 'MATCHUP': df['MATCHUP'],
                 'WL': df['WL'],
-                'PTS': df['PTS'],
-                'IS_WIN': df['WL'] == 'W'
+                'PTS': df['PTS']
             })
-            
-            self.cache[cache_key] = result_df
+            result_df["IS_WIN"] = result_df["WL"] == "W"
+
+            time.sleep(self.sleep_seconds)
             return result_df
-            
+
         except Exception as e:
-            print(f"Error loading game log: {e}")
+            print(f"Error cargando game log team_id={team_id}: {e}")
             return pd.DataFrame()
