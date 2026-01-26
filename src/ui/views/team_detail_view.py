@@ -58,7 +58,7 @@ class TeamDetailView(ctk.CTkFrame):
     # SECCION SUPERIOR CON LA INFORMACIÓN DE CADA EQUIPO
     def create_team_info_section(self):
         team_info_frame = ctk.CTkFrame(self.scroll_frame, fg_color="transparent")
-        team_info_frame.pack(fill="x", pady=(0, 30))
+        team_info_frame.pack(fill="x")
         
         # Container horizontal
         content_container = ctk.CTkFrame(team_info_frame, fg_color="transparent")
@@ -153,22 +153,22 @@ class TeamDetailView(ctk.CTkFrame):
         bottom_container = ctk.CTkFrame(self.scroll_frame, fg_color="transparent")
         bottom_container.pack(fill="both", expand=True)
 
+        # Columna izquierda - Partidos recientes
         self.recent_col = ctk.CTkFrame(
             bottom_container,
             fg_color="transparent",
             width=self.recent_games_column_width
         )
-        self.recent_col.pack(side="left", fill="both", padx=(0, 20), anchor="n")
+        self.recent_col.pack(side="left", fill="y", padx=(0, 20), anchor="n")
         self.recent_col.pack_propagate(False)
 
+        # Frame de partidos recientes que se ajusta al contenido
         self.recent_games_frame = ctk.CTkFrame(
             self.recent_col,
             fg_color="#161b22",
             corner_radius=10
         )
-        self.recent_games_frame.pack(fill="both", expand=True)
-        self.recent_games_frame.pack_propagate(False)
-        self.recent_games_frame.configure(height=420)
+        self.recent_games_frame.pack(fill="x", expand=False)
 
         self.recent_placeholder = ctk.CTkLabel(
             self.recent_games_frame,
@@ -176,8 +176,9 @@ class TeamDetailView(ctk.CTkFrame):
             font=ctk.CTkFont(size=13),
             text_color="#6e7681"
         )
-        self.recent_placeholder.pack(expand=True)
+        self.recent_placeholder.pack(expand=True, pady=20)  # Añadido pady para dar espacio
 
+        # Columna derecha - Jugadores
         self.players_col = ctk.CTkFrame(bottom_container, fg_color="transparent")
         self.players_col.pack(side="left", fill="both", expand=True, anchor="n")
 
@@ -330,13 +331,46 @@ class TeamDetailView(ctk.CTkFrame):
                 i, weight=col["weight"], minsize=col["minsize"]
             )
 
+        player_info_frame = ctk.CTkFrame(row, fg_color="transparent")
+        player_info_frame.grid(row=0, column=0, sticky="w", padx=15, pady=10)
+
+        # Número en círculo
+        number_circle = ctk.CTkFrame(
+            player_info_frame,
+            fg_color="#30363d",
+            width=40,
+            height=40,
+            corner_radius=20
+        )
+        number_circle.pack(side="left", padx=(0, 12))
+        number_circle.pack_propagate(False)
+
         ctk.CTkLabel(
-            row,
-            text=f"#{player_data['number']}  {player_data['name']} ({player_data['position']})",
-            font=ctk.CTkFont(size=14),
+            number_circle,
+            text=f"{player_data['number']}",
+            font=ctk.CTkFont(size=14, weight="bold"),
+            text_color="#c9d1d9"
+        ).place(relx=0.5, rely=0.5, anchor="center")
+
+        # Nombre y posición (vertical)
+        name_container = ctk.CTkFrame(player_info_frame, fg_color="transparent")
+        name_container.pack(side="left")
+
+        ctk.CTkLabel(
+            name_container,
+            text=player_data['name'],
+            font=ctk.CTkFont(size=15, weight="bold"),
             text_color="#c9d1d9",
             anchor="w"
-        ).grid(row=0, column=0, sticky="w", padx=15)
+        ).pack(anchor="w")
+
+        ctk.CTkLabel(
+            name_container,
+            text=player_data['position'],
+            font=ctk.CTkFont(size=12),
+            text_color="#8b949e",
+            anchor="w"
+        ).pack(anchor="w")
 
         ctk.CTkLabel(
             row,
