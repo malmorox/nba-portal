@@ -100,3 +100,40 @@ class NBADataFetcher:
         except Exception as e:
             print(f"Error cargando game log team_id={team_id}: {e}")
             return pd.DataFrame()
+    
+    def get_top_players_per_game(
+        self,
+        stat: str = "PTS",
+        top_n: int = 5,
+        season_type: str = "Regular Season",
+        min_gp: int = 5,
+    ) -> pd.DataFrame:
+        stat = stat.upper().strip()
+
+        try:
+            resp = self._retry_call(
+                leaguedashplayerstats.LeagueDashPlayerStats,
+                season=self.current_season,
+                season_type_all_star=season_type,
+                per_mode_detailed="PerGame"
+            )
+
+            df = resp.get_data_frames()[0]
+            if df.empty or stat not in df.columns:
+                return pd.DataFrame()
+
+            df = df[df["GP"] >= min_gp]
+
+            result = (
+                df.sort_values(by=stat, ascending=False)
+                .head(top_n)
+                .loc[:, ["PLAYER_NAME", "TEAM_ABBREVIATION", stat]]
+                .rename(columns={stat: "VALUE"})
+                .reset_index(drop=True)
+            )
+
+            return result
+
+        except Exception as e:
+            print(f"Error obteniendo TOP {stat}: {e}")
+            return pd.DataFrame()
