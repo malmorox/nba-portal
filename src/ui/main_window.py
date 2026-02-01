@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from src.core.data_fetcher import NBADataFetcher
 from src.core.data_processor import NBADataProcessor
+from src.ui.views.stats_view import StatsView
 from src.ui.views.teams_view import TeamsView
 from src.ui.views.team_detail_view import TeamDetailView
 
@@ -93,7 +94,13 @@ class MainWindow(ctk.CTk):
         self.clear_content()
         self.update_nav_buttons(view_name)
         
-        if view_name == 'teams':
+        if view_name == 'stats':
+            self.current_view = StatsView(
+                self.content_container,
+                self.data_fetcher
+            )
+        
+        elif view_name == 'teams':
             self.current_view = TeamsView(
                 self.content_container, 
                 self.data_fetcher,
