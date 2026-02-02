@@ -2,22 +2,23 @@ from src.core.data_processor import NBADataProcessor
 import customtkinter as ctk
 from PIL import Image
 import os
+from src.ui.styles.colors import COLORS
 
 class RecentGamesCard(ctk.CTkFrame):
 
     def __init__(self, parent, games_df, title="Últimos 10 partidos", **kwargs):
-        super().__init__(parent, fg_color="#161b22", corner_radius=10, **kwargs)
+        super().__init__(parent, fg_color=COLORS['bg_medium'], corner_radius=10, **kwargs)
         self.games_df = games_df
         self.title = title
         self.setup_ui()
 
     def setup_ui(self):
-        # Header
+        # Cabezera
         header = ctk.CTkLabel(
             self,
             text=self.title,
             font=ctk.CTkFont(size=18, weight="bold"),
-            text_color="#c9d1d9",
+            text_color=COLORS['text_primary'],
             anchor="w"
         )
         header.pack(anchor="w", padx=20, pady=(15, 10))
@@ -32,13 +33,13 @@ class RecentGamesCard(ctk.CTkFrame):
         for _, row in self.games_df.iterrows():
             self.create_game_item(list_frame, row).pack(fill="x", pady=6)
 
-    def _get_opponent_abbr(self, matchup: str) -> str:
+    def get_opponent_abbr(self, matchup: str) -> str:
         if not matchup:
             return "UNK"
         parts = matchup.replace("vs.", "vs").split()
         return parts[-1].strip()
     
-    def _get_team_logo(self, abbr: str, size=(20, 20)):
+    def get_team_logo(self, abbr: str, size=(20, 20)):
         if not abbr:
             return None
 
@@ -62,15 +63,13 @@ class RecentGamesCard(ctk.CTkFrame):
         wl = str(game_data.get("WL", ""))
         date_text = str(game_data.get("GAME_DATE", ""))
 
-        opponent = self._get_opponent_abbr(str(game_data.get("MATCHUP", "")))
+        opponent = self.get_opponent_abbr(str(game_data.get("MATCHUP", "")))
 
         # Colores
-        row_bg = "#0d1117"
-        primary = "#ffffff" if is_win else "#c9d1d9"
-        muted = "#6e7681"
-        badge_bg = "#238636" if is_win else "#da3633"
+        primary = "#ffffff" if is_win else COLORS['text_primary']
+        badge_bg = COLORS['win'] if is_win else COLORS['lose']
 
-        item = ctk.CTkFrame(parent, fg_color=row_bg, corner_radius=8)
+        item = ctk.CTkFrame(parent, fg_color=COLORS['bg_dark'], corner_radius=8)
 
         container = ctk.CTkFrame(item, fg_color="transparent")
         container.pack(fill="x", padx=12, pady=10)
@@ -79,7 +78,7 @@ class RecentGamesCard(ctk.CTkFrame):
             container,
             text=NBADataProcessor.format_birth_date(date_text),
             font=ctk.CTkFont(size=12),
-            text_color=muted,
+            text_color=COLORS['text_secondary'],
             width=95,
             anchor="w"
         ).pack(side="left", padx=(0, 14))
@@ -87,13 +86,13 @@ class RecentGamesCard(ctk.CTkFrame):
         matchup_container = ctk.CTkFrame(container, fg_color="transparent")
         matchup_container.pack(side="left", fill="x", expand=True)
         # logo rival
-        logo_img = self._get_team_logo(opponent)
+        logo_img = self.get_team_logo(opponent)
         
         ctk.CTkLabel(
             matchup_container,
             text="vs",
             font=ctk.CTkFont(size=13),
-            text_color=muted,
+            text_color=COLORS['text_secondary'],
             anchor="w"
         ).pack(side="left", padx=(0, 6))
 

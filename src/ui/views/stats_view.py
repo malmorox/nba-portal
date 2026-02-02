@@ -1,9 +1,11 @@
 import customtkinter as ctk
 from src.ui.components.stat_card import StatCard
+from src.ui.components.chart_types import ChartType
+from src.ui.styles.colors import COLORS
 
 class StatsView(ctk.CTkFrame):
     def __init__(self, parent, data_fetcher):
-        super().__init__(parent, fg_color="#0d1117")
+        super().__init__(parent, fg_color=COLORS['bg_dark'])
 
         self.data_fetcher = data_fetcher
 
@@ -14,18 +16,19 @@ class StatsView(ctk.CTkFrame):
 
     def build_stats(self):
         stats = [
-            ("5 máximos anotadores", "PTS"),
-            ("5 máximos reboteadores", "REB"),
-            ("5 máximos asistentes", "AST"),
-            ("5 máximos tapones", "BLK"),
-            ("5 máximos robos", "STL"),
+            ("5 máximos anotadores", "PTS", ChartType.BARH),
+            ("5 máximos reboteadores", "REB", ChartType.LINE),
+            ("5 máximos asistentes", "AST", ChartType.DONUT),
+            ("5 máximos tapones", "BLK", ChartType.BARH),
+            ("5 máximos robos", "STL", ChartType.LINE),
         ]
 
-        for title, stat in stats:
-            chart = StatCard(
+        for title, stat, chart_type in stats:
+            card = StatCard(
                 self.scroll,
                 title=title,
                 stat=stat,
+                chart_type=chart_type,
                 data_fetcher=self.data_fetcher
             )
-            chart.pack(fill="x", pady=20)
+            card.pack(fill="x", pady=20)

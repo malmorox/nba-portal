@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from PIL import Image
 from pathlib import Path
+from src.ui.styles.colors import COLORS
 
 class TeamCard(ctk.CTkFrame):
     def __init__(self, parent, team_data, on_click=None, width=220, height=220):
@@ -21,7 +22,7 @@ class TeamCard(ctk.CTkFrame):
             child.bind("<Button-1>", self.handle_click)
     
     def setup_ui(self):
-        self.configure(fg_color="#21262d")
+        self.configure(fg_color=COLORS['cards_or_buttons_primary'])
         
         # Logo del equipo
         self.load_and_display_logo()
@@ -32,7 +33,7 @@ class TeamCard(ctk.CTkFrame):
             text=self.team_data['full_name'],
             font=ctk.CTkFont(size=14, weight="bold"),
             wraplength=180,
-            text_color="#c9d1d9"
+            text_color=COLORS['text_primary']
         )
         name_label.pack(pady=(10, 5))
         
@@ -41,25 +42,24 @@ class TeamCard(ctk.CTkFrame):
             self,
             text=self.team_data['abbreviation'],
             font=ctk.CTkFont(size=12),
-            text_color="#8b949e"
+            text_color=COLORS['text_secondary']
         )
         abbr_label.pack(pady=(0, 5))
     
     
-    # Carga y muestra el logo del equipo
+    # Carga y muestra el logo del equipo a partir de la abreviación
     def load_and_display_logo(self):
         abbr = self.team_data['abbreviation']
         logo_path = Path(f'assets/logos/{abbr}.png')
         
         if logo_path.exists():
             try:
-                # Cargar imagen
+                # Cargar imagen con PIL
                 pil_image = Image.open(logo_path)
                 
-                # Redimensionar manteniendo aspecto
+                # Redimensionando manteniendo aspecto
                 pil_image.thumbnail((100, 100), Image.Resampling.LANCZOS)
                 
-                # Crear imagen para CustomTkinter
                 logo_img = ctk.CTkImage(
                     light_image=pil_image,
                     dark_image=pil_image,
@@ -69,33 +69,12 @@ class TeamCard(ctk.CTkFrame):
                 logo_label = ctk.CTkLabel(self, image=logo_img, text="")
                 logo_label.pack(pady=(20, 5))
                 
-                # Mantener referencia para evitar garbage collection
                 logo_label.image = logo_img
                 
             except Exception as e:
-                self.show_placeholder(f"Error: {e}")
+                print(f"Error: {e}")
         else:
-            self.show_placeholder("Logo no encontrado")
-    
-    
-    # Muestra un placeholder cuando no hay logo (NO PASA)
-    def show_placeholder(self, message=""):
-        placeholder = ctk.CTkLabel(
-            self,
-            text="🏀",
-            font=ctk.CTkFont(size=60)
-        )
-        placeholder.pack(pady=(20, 5))
-        
-        if message:
-            error_label = ctk.CTkLabel(
-                self,
-                text=message,
-                font=ctk.CTkFont(size=9),
-                text_color="#6e7681"
-            )
-            error_label.pack()
-    
+            print("Logo no encontrado")
     
     def handle_click(self, event):
         if self.on_click:

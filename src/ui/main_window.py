@@ -4,12 +4,13 @@ from src.core.data_processor import NBADataProcessor
 from src.ui.views.stats_view import StatsView
 from src.ui.views.teams_view import TeamsView
 from src.ui.views.team_detail_view import TeamDetailView
+from src.ui.styles.colors import COLORS
 
 class MainWindow(ctk.CTk):
     def __init__(self):
         super().__init__()
         
-        self.title("Estadísticas de NBA")
+        self.title("Portal NBA")
         self.geometry("1400x900")
         
         # Tema oscuro
@@ -17,18 +18,15 @@ class MainWindow(ctk.CTk):
         ctk.set_default_color_theme("blue")
         
         # Color de fondo
-        self.configure(fg_color="#0d1117")
+        self.configure(fg_color=COLORS['bg_dark'])
         
-        # Inicializar data fetcher
         self.data_fetcher = NBADataFetcher()
 
         self.data_processor = NBADataProcessor()
         
-        # Container para las vistas
-        self.main_container = ctk.CTkFrame(self, fg_color="#0d1117")
+        self.main_container = ctk.CTkFrame(self, fg_color=COLORS['bg_dark'])
         self.main_container.pack(fill="both", expand=True)
         
-        # Configurar UI
         self.setup_ui()
         
         # Mostrar vista inicial
@@ -36,7 +34,7 @@ class MainWindow(ctk.CTk):
     
     def setup_ui(self):
         # Header con navegación
-        self.header = ctk.CTkFrame(self.main_container, fg_color="#161b22", height=60)
+        self.header = ctk.CTkFrame(self.main_container, fg_color=COLORS['bg_medium'], height=60)
         self.header.pack(fill="x", padx=0, pady=0)
         self.header.pack_propagate(False)
         
@@ -67,29 +65,27 @@ class MainWindow(ctk.CTk):
             btn.pack(side="left", padx=5)
         
         # Content container
-        self.content_container = ctk.CTkFrame(self.main_container, fg_color="#0d1117")
+        self.content_container = ctk.CTkFrame(self.main_container, fg_color=COLORS['bg_dark'])
         self.content_container.pack(fill="both", expand=True)
         
         # Vista actual
         self.current_view = None
     
     def update_nav_buttons(self, active_view):
-        """Actualiza el estilo de los botones de navegación"""
         for key, btn in self.nav_buttons.items():
             if key == active_view:
-                btn.configure(fg_color="#17A7E8", hover_color="#27B7F5")
+                btn.configure(fg_color=COLORS['primary'], hover_color=COLORS['secondary'])
             else:
-                btn.configure(fg_color="#21262d", hover_color="#30363d")
+                btn.configure(fg_color=COLORS['cards_or_buttons_primary'], hover_color=COLORS['cards_or_buttons_secondary'])
     
     
     def clear_content(self):
-        """Limpia el contenedor de contenido"""
         if self.current_view:
             self.current_view.destroy()
             self.current_view = None
     
     
-    # Muestra una vista específica
+    # Muestra la vista que se pasa por parametro
     def show_view(self, view_name):
         self.clear_content()
         self.update_nav_buttons(view_name)

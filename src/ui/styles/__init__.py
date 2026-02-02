@@ -1,1 +1,1 @@
-from .colors import COLORS, THEME_MODE, COLOR_THEME
+from .colors import COLORS

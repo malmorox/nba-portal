@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import time
 
+# Carpeta base del proyecto 
 BASE_DIR = Path(__file__).resolve().parents[2]
 
 class NBADataFetcher:
@@ -13,12 +14,13 @@ class NBADataFetcher:
         self.data_dir.mkdir(parents=True, exist_ok=True)
         self.current_season = '2025-26'
         self._init_config()
-
+    # Configuración de seguridad para evitar problemas
     def _init_config(self):
         self.sleep_seconds = 0.6
         self.max_retries = 3
         self.retry_sleep = 1.5
 
+    # Funcion que ejecuta una llamada a la API con reintentos para evitar problemas
     def _retry_call(self, fn, *args, **kwargs):
         last_error = None
         for attempt in range(1, self.max_retries + 1):
@@ -26,10 +28,11 @@ class NBADataFetcher:
                 return fn(*args, **kwargs)
             except Exception as e:
                 last_error = e
-                print(f"[Retry {attempt}/{self.max_retries}] {e}")
+                print(f"[Intento {attempt}/{self.max_retries}] {e}")
                 time.sleep(self.retry_sleep)
         raise last_error
     
+    # Devuelve un dataframe con todos los equipos
     def get_all_teams(self):
         csv_path = self.data_dir / 'nba_teams.csv'
         
@@ -43,7 +46,7 @@ class NBADataFetcher:
         df = df.sort_values(by="full_name").reset_index(drop=True)
         return df
     
-    
+    # Busca un equipo por su id
     def get_team_by_id(self, team_id: int) -> dict | None:
         all_teams = self.get_all_teams().to_dict(orient='records')
         for team in all_teams:
@@ -51,6 +54,7 @@ class NBADataFetcher:
                 return team
         return None
     
+    # Obtiene la plantilla de un equipo de la temporada actual
     def get_team_roster(self, team_id: int):
         try:
             roster = commonteamroster.CommonTeamRoster(
@@ -65,10 +69,10 @@ class NBADataFetcher:
             return df
             
         except Exception as e:
-            print(f"Error obteniendo roster del equipo {team_id}: {e}")
+            print("Error: ", e)
             return pd.DataFrame()
     
-    
+    # Obtiene los 10 últimos partidos de un equipo
     def get_team_last_games(self, team_id, last_n=10):
         if last_n <= 0:
             return pd.DataFrame()
@@ -98,9 +102,10 @@ class NBADataFetcher:
             return result_df
 
         except Exception as e:
-            print(f"Error cargando game log team_id={team_id}: {e}")
+            print("Error: ", e)
             return pd.DataFrame()
     
+    # Devuelve el top 5 de mejores jugadores por partido de una estadstica
     def get_top_players_per_game(
         self,
         stat: str = "PTS",
@@ -135,5 +140,5 @@ class NBADataFetcher:
             return result
 
         except Exception as e:
-            print(f"Error obteniendo TOP {stat}: {e}")
+            print("Error: ", e)
             return pd.DataFrame()

@@ -1,9 +1,9 @@
 <h1>
-  <img src="https://graffica.info/wp-content/uploads/2017/08/NBA-logo-png-download-free.png" alt="NBA Logo" width="70" style="vertical-align: middle;">
-  Stats
+  <img src="https://graffica.info/wp-content/uploads/2017/08/NBA-logo-png-download-free.png" alt="NBA Logo" width="50" style="vertical-align: middle;">
+  Portal NBA
 </h1>
 
-Proyecto de estadísticas NBA en Python utilizando [nba_api](https://pypi.org/project/nba_api/) junto con Pandas y Matplotlib para análisis y visualización de datos.
+Proyecto de programa NBA desarrollado en Python utilizando la librería de [nba_api](https://pypi.org/project/nba_api/), junto a Pandas y Matplotlib para análisis y visualización de datos.
 
 ## Instalación
 
@@ -18,7 +18,8 @@ python main.py
 ```
 
 ## Tecnologías
-- Python 3.x
+- Python
+- Jupyter Notebooks
 - nba_api
 - pandas
 - matplotlib
